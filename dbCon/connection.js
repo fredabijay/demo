@@ -11,16 +11,16 @@ const get_info = (query, callback) => {
 
     con.connect(function(err) {
         if (err) {
-            return callback({success:false, message:err.code})
+            return callback({error:'true', data:err.code})
         }
         console.log('Connected');
     })
 
     con.query(query, function(err, result, fields) {
         if (err) {
-            return callback({success:false, message:err.code})
+            return callback({error:'true', data:err.code})
         }
-        return callback({success:true, data:result});
+        return callback({error:'false', data:result});
     })
 
     con.end(() => console.log('connection closed.'));

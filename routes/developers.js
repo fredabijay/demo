@@ -8,13 +8,38 @@ router.use(function timeLog (req, res, next) {
   console.log('Time: ', Date.now())
   next()
 })
-// define the home page route
+
 router.get('/', function (req, res) {
     let query = `SELECT TID, NAME, ADDRESS, CONTACT_PERSON, PHONE
     FROM DEVELOPERS  
     ORDER BY NAME`;
     connection.get_info(query, function(result) {
-        res.json({'response':result});
+        if (result.error === 'true') {
+            res.sendStatus(result.data);
+        } else {
+            if (result.data.length === 0) {
+                res.status(404).json({data:'NO DATA FOUND'});
+            } else {
+                res.status(200).json(result.data);
+            }
+        }
+    })
+})
+
+router.get('/:id', function (req, res) {
+    let query = `SELECT TID, NAME, ADDRESS, CONTACT_PERSON, PHONE
+    FROM DEVELOPERS  
+    WHERE TID=${req.params.id}`;
+    connection.get_info(query, function(result) {
+        if (result.error === 'true') {
+            res.sendStatus(result.data);
+        } else {
+            if (result.data.length === 0) {
+                res.status(404).json({data:'ID NOT FOUND'});
+            } else {
+                res.status(200).json(result.data);
+            }
+        }
     })
 })
 
