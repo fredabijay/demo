@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../dbCon/connection');
 const bulkConnection = require('../dbCon/bulkConnection');
+const e = require('express');
 
 // middleware that is specific to this router
 router.use(function timeLog (req, res, next) {
@@ -43,10 +44,19 @@ router.get('/:id', function (req, res) {
 })
 
 router.post('/', function(req, res) {
-    let query = `INSERT INTO DEVELOPERS(NAME, ADDRESS, CONTACT_PERSON, PHONE) 
-    VALUES('${req.body.name}','${req.body.address}','${req.body.contact_person}','${req.body.phone}')`;
-    connection.set_info(query, function(result) {
-        res.send(result);
+    let pairs = {NAME:`${req.body.name}`, ADDRESS:`${req.body.address}`, CONTACT_PERSON:`${req.body.contact_person}`, PHONE:`${req.body.phone}`};
+    let query = 'INSERT INTO ?? SET ?';
+    connection.set_info(query, ['DEVELOPERS', pairs], function(result) {
+        console.log(result.error);
+        if (result.error === 'true') {
+            if (result.data === 'ER_DUP_ENTRY') {
+                res.status(409).json({data:'DUPLICATE ENTRY'})
+            } else {
+                res.sendStatus(result.data)
+            }
+        } else {
+            res.status(200).json(result.data);
+        }
     })
 })
 

@@ -26,7 +26,7 @@ const get_info = (query, arr, callback) => {
     con.end(() => console.log('connection closed.'));
 }
 
-const test_set_info = (query, post, callback) => {
+const set_info = (query, arr, callback) => {
     const con = mysql.createConnection({
         host:'localhost',
         port:3307,
@@ -40,49 +40,12 @@ const test_set_info = (query, post, callback) => {
         console.log('Connected');
     })
 
-    con.query(query, post, function(err, result) {
+    con.query(query, arr, function(err, result) {
         if (err) {
-            console.log(err.code);
-            if(err.code === 'ER_DUP_ENTRY' || err.errno === 1062) {
-                return callback({success:false, message:'duplicate entry'})
-            }
-            else {
-                return callback({success:false, message:err.code})
-            }
+            return callback({error:'true', data:err.code})
         }
         let insertId = result.insertId;
-        return callback({success:true, message:insertId})
-    })
-
-    con.end(() => console.log('connection closed.'));
-}
-
-const set_info = (query, callback) => {
-    const con = mysql.createConnection({
-        host:'localhost',
-        port:3307,
-        database:'realty',
-        user:'root',
-        password:'bluedolphin'
-    });
-
-    con.connect(function(err) {
-        if (err) throw err;
-        console.log('Connected');
-    })
-
-    con.query(query, function(err, result) {
-        if (err) {
-            console.log(err.code);
-            if(err.code === 'ER_DUP_ENTRY' || err.errno === 1062) {
-                return callback({success:false, message:'duplicate entry'})
-            }
-            else {
-                return callback({success:false, message:err.code})
-            }
-        }
-        let insertId = result.insertId;
-        return callback({success:true, message:insertId})
+        return callback({error:'false', data:insertId})
     })
 
     con.end(() => console.log('connection closed.'));
@@ -118,4 +81,3 @@ const bulkUpdate = (query, callback) => {
 exports.bulkUpdate = bulkUpdate;
 exports.get_info = get_info;
 exports.set_info = set_info;
-exports.test_set_info = test_set_info;
