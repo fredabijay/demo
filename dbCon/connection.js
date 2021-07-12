@@ -1,13 +1,16 @@
 const mysql = require('mysql');
+const config = require('./config.js');
 
 const get_info = (query, arr, callback) => {
-    const con = mysql.createConnection({
-        host:'localhost',
-        port:3307,
-        database:'realty',
-        user:'root',
-        password:'bluedolphin'
-    });
+    // const con = mysql.createConnection({
+    //     host:'localhost',
+    //     port:3307,
+    //     database:'realty',
+    //     user:'root',
+    //     password:'bluedolphin'
+    // });
+
+    const con = mysql.createConnection(config.databaseOptions);
 
     con.connect(function(err) {
         if (err) {
