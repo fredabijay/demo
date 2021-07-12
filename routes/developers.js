@@ -10,10 +10,9 @@ router.use(function timeLog (req, res, next) {
 })
 
 router.get('/', function (req, res) {
-    let query = `SELECT TID, NAME, ADDRESS, CONTACT_PERSON, PHONE
-    FROM DEVELOPERS  
-    ORDER BY NAME`;
-    connection.get_info(query, function(result) {
+    let columns = ['TID', 'NAME', 'ADDRESS', 'CONTACT_PERSON', 'PHONE'];
+    let query = `SELECT ?? FROM ?? ORDER BY ?`;
+    connection.get_info(query, [columns, 'DEVELOPERS', 'NAME'], function(result) {
         if (result.error === 'true') {
             res.sendStatus(result.data);
         } else {
@@ -27,10 +26,10 @@ router.get('/', function (req, res) {
 })
 
 router.get('/:id', function (req, res) {
-    let query = `SELECT TID, NAME, ADDRESS, CONTACT_PERSON, PHONE
-    FROM DEVELOPERS  
-    WHERE TID=${req.params.id}`;
-    connection.get_info(query, function(result) {
+    let queryId = req.params.id;
+    let columns = ['TID', 'NAME', 'ADDRESS', 'CONTACT_PERSON', 'PHONE'];
+    let query = `SELECT ?? FROM ?? WHERE TID=?`;
+    connection.get_info(query, [columns, 'DEVELOPERS', queryId], function(result) {
         if (result.error === 'true') {
             res.sendStatus(result.data);
         } else {

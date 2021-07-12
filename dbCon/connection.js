@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 
-const get_info = (query, callback) => {
+const get_info = (query, arr, callback) => {
     const con = mysql.createConnection({
         host:'localhost',
         port:3307,
@@ -16,7 +16,7 @@ const get_info = (query, callback) => {
         console.log('Connected');
     })
 
-    con.query(query, function(err, result, fields) {
+    con.query(query, arr, function(err, result, fields) {
         if (err) {
             return callback({error:'true', data:err.code})
         }
