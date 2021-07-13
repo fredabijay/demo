@@ -3,5 +3,6 @@ module.exports.databaseOptions = {
     port:3307,
     database:'realty',
     user:'root',
-    password:'bluedolphin'
+    password:'bluedolphin',
+    connectionLimit:100
 };

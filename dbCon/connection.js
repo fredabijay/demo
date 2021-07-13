@@ -1,43 +1,29 @@
 const mysql = require('mysql');
 const config = require('./config.js');
 
-const get_info = (query, arr, callback) => {
-    const con = mysql.createConnection(config.databaseOptions);
+const run = (query, arr, callback) => {
+    const pool = mysql.createPool(config.databaseOptions);
 
-    con.connect(function(err) {
+    pool.getConnection(function(err, connection) {
         if (err) {
             return callback({error:'true', data:err.code})
         }
         console.log('Connected');
+        connection.query(query, arr, function(err, result, fields) {
+            if (err) {
+                return callback({error:'true', data:err.code})
+            }
+            return callback({error:'false', data:result});
+        })
+    
+        connection.release((err) => { 
+            if (err) {
+                return callback({error:'true', data:err.code})
+            } else {
+                console.log('Connection released');
+            }
+        });
     })
-
-    con.query(query, arr, function(err, result, fields) {
-        if (err) {
-            return callback({error:'true', data:err.code})
-        }
-        return callback({error:'false', data:result});
-    })
-
-    con.end(() => console.log('connection closed.'));
-}
-
-const set_info = (query, arr, callback) => {
-    const con = mysql.createConnection(config.databaseOptions);
-
-    con.connect(function(err) {
-        if (err) throw err;
-        console.log('Connected');
-    })
-
-    con.query(query, arr, function(err, result) {
-        if (err) {
-            return callback({error:'true', data:err.code})
-        }
-        let insertId = result.insertId;
-        return callback({error:'false', data:insertId})
-    })
-
-    con.end(() => console.log('connection closed.'));
 }
 
 const bulkUpdate = (query, callback) => {
@@ -68,5 +54,4 @@ const bulkUpdate = (query, callback) => {
 }
 
 exports.bulkUpdate = bulkUpdate;
-exports.get_info = get_info;
-exports.set_info = set_info;
+exports.run = run;
